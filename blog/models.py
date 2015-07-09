@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from jsonfield import JSONField
 
 class Post(models.Model):
     #author = models.ForeignKey('auth.User')
@@ -15,4 +16,10 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+class Annotation(models.Model):
+    URI = models.TextField()
+    surfaceForm = models.TextField()
+    offset = models.TextField()
+    attributeValues = models.TextField()
+    post = models.ForeignKey(Post)
 
