@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from jsonfield import JSONField
 
 class Post(models.Model):
     #author = models.ForeignKey('auth.User')
