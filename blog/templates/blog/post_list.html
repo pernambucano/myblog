@@ -44,12 +44,7 @@
            					text = text.replace(/&#39;/g, '\'');
             				text = text.replace(/&quot;/g, '\"');
 							var last = 0;
-							var newText = "";
-//							var post_atual = "{{post}}";
-//							var annot_atual = "{{annotations}}";
-							
-							console.log("post :"+ post_atual+ " annot_atual: " + annot_atual);
-									
+							var newText = "";		
 							{% if annotations %}
 
 							{% for resource in annotations %} 
