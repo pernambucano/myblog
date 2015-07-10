@@ -18,6 +18,11 @@ import json
 SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
 SPOTLIGHT_CONFIDENCE = 0.5
 
+def smart_truncate(content, length=500, suffix='...'):
+    if len(content) <= length:
+        return content
+    else:
+        return ' '.join(content[:length+1].split(' ')[0:-1]) + suffix
 
 def post_list(request):
     posts = Post.objects.filter(
@@ -52,8 +57,12 @@ def post_new(request):
                     
                     for name, value in resource_attribute_values.items():
                         resource_attribute_values[name] = ", ".join(value).replace('\n', ' ')
-                        
-                    anot = Annotation(id=None, URI =resource['@URI'], surfaceForm=resource['@surfaceForm'], offset=resource['@offset'], label = 'Dilma')
+                    
+                    print('the resource_att_values =', resource_attribute_values)
+                    
+                    abstractStrTrunc  = smart_truncate(resource_attribute_values['abstract'])
+                    print('then I try to get abstract', abstractStrTrunc)   
+                    anot = Annotation(id=None, URI =resource['@URI'], surfaceForm=resource['@surfaceForm'], offset=resource['@offset'], label = resource_attribute_values['label'], abstract = abstractStrTrunc)
                     anot.p = post;
                     anot.save()
             return redirect('blog.views.post_list')

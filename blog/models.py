@@ -21,7 +21,11 @@ class Annotation(models.Model):
     surfaceForm = models.TextField()
     offset = models.TextField()
 #    attributeValues = models.TextField()
+#   start of Tooltip values
     label = models.TextField()
+    abstract = models.TextField()
+#   end of Tooltip values
+    
     p = models.ForeignKey(Post)
 
     def __str__(self):
