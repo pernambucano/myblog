@@ -22,7 +22,8 @@ SPOTLIGHT_CONFIDENCE = 0.5
 def post_list(request):
     posts = Post.objects.filter(
     published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    annotations = Annotation.objects.all()
+    return render(request, 'blog/post_list.html', {'posts': posts, 'annotations':annotations})
 
 # Same idea as 'consult'
 
@@ -33,6 +34,7 @@ def post_new(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.published_date = timezone.now()
+            
 
             text = request.POST['text']
             annotator = DBpediaAnnotator()
@@ -43,13 +45,16 @@ def post_new(request):
             post.save()
             if 'Resources' in annotations:
                 for resource in annotations['Resources']:
+                    
+
                     resource_attribute_values = sparql_endpoint.query_attributes(
                             resource['@URI'], ['owl:Thing'] + resource['@types'].split(','))
-
+                    
                     for name, value in resource_attribute_values.items():
                         resource_attribute_values[name] = ", ".join(value).replace('\n', ' ')
-
-                    anot = Annotation(URI =resource['@URI'], surfaceForm=resource['@surfaceForm'], offset=resource['@offset'], attributeValues=resource_attribute_values, post =post )
+                        
+                    anot = Annotation(id=None, URI =resource['@URI'], surfaceForm=resource['@surfaceForm'], offset=resource['@offset'], label = 'Dilma')
+                    anot.p = post;
                     anot.save()
             return redirect('blog.views.post_list')
 

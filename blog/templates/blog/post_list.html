@@ -1,16 +1,21 @@
-{% load staticfiles %}
+<!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">    
-        <link rel="stylesheet" href="{% static "css/blog.css"%}">
+		<meta charset="UTF-8">
+        {% load staticfiles %}
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">    
+		<link rel="stylesheet" href="{% static "css/blog.css"%}">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+			<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <link href="http://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">    
-        <title>Django Girls blog</title>
+        <title>CIn UFPE Blog</title>
+		
     </head>
     <body>
         <div class="page-header">
             <a href="{% url "blog.views.post_new" %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-            <h1><a href="/">Django Girls Blog</a></h1>
+            <h1><a href="/">CIn UFPE Blog</a></h1>
         </div>
         
 
@@ -23,7 +28,87 @@
                         {{ post.published_date }}
                     </div>
                     <h1><a href="">{{ post.title }}</a></h1>
-                    <p>{{ post.text|linebreaks }}</p>
+						<p id="{{post}}" ></p>
+					<script>
+                       
+						
+						      
+						var consult = document.getElementById("{{post}}");
+						consult.innerHTML =prettifier("{{post.text}}");
+					
+						
+						function prettifier(text) {
+
+
+
+           					text = text.replace(/&#39;/g, '\'');
+            				text = text.replace(/&quot;/g, '\"');
+							var last = 0;
+							var newText = "";
+							var post_atual = "{{post}}";
+							var annot_atual = "{{annotations}}";
+							
+							console.log("post :"+ post_atual+ " annot_atual: " + annot_atual);
+									
+							{% if annotations %}
+
+							{% for resource in annotations %} 
+							
+							{% if resource.p == post %}
+							var resc = "{{resource}}";
+							console.log("resource atual: "+ resc);
+							
+							
+							for (var i = last; i < text.length; i++) {
+								last = i;
+								var resAtV = "{{resource.attributeValues}}";
+								console.log("resAtV : "+ resAtV);	
+								if (i == {{resource.offset}}) {
+									
+									newText += "<mark><span id=\"myPopover\" data-toggle=\"popover\" title=\"{{resource.label}}\" data-content=\"Some content inside the popover\">{{resource.surfaceForm}}</span>";
+//									newText += "<h2>{{resource.attributeValues.label}}</h2>";
+									
+//									var value;
+//									var limit;
+//
+//									{% for name, value in resource.attributeValues.items %}
+//										value = "{{ value }}";
+//										limit = Math.min(value.length, 500);
+//										
+//										{% if name != "label" %}
+//											newText += "<b>{{ name.title }}</b>: " + value.substr(0,limit) + ((limit==500)?("<i> (...)</i>"):(""));
+//										{% endif %}
+//
+//									{% endfor %}
+//
+//
+//									newText += "</span></a>";
+									newText += "</mark>";
+									last += "{{resource.surfaceForm}}".length;
+
+									break;
+								}
+
+								else newText += text[i];
+							}
+					
+							{% endif %}
+							{% endfor %}
+							{% endif %}
+
+							for (var i = last; i < text.length; i++) {
+								newText += text[i];
+							}
+							console.log("resultado" + newText);
+							return newText;
+
+						}
+						
+						$(document).ready(function(){
+   						 $('[data-toggle="popover"]').popover();   
+						});
+						
+					</script>
                 </div>
             {% endfor %}
         </div>
