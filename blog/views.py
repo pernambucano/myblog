@@ -15,9 +15,7 @@ import urllib.error
 import json
 
 
-# SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
-
-SPOTLIGHT_URL = 'http://spotlight.sztaki.hu:2222/rest/annotate'
+SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
 SPOTLIGHT_CONFIDENCE = 0.5
 
 def smart_truncate(content, length=500, suffix='...'):
