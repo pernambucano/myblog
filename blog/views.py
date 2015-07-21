@@ -15,7 +15,9 @@ import urllib.error
 import json
 
 
-SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
+# SPOTLIGHT_URL = 'http://spotlight.dbpedia.org/rest/annotate'
+
+SPOTLIGHT_URL = 'http://spotlight.sztaki.hu:2222/rest/annotate'
 SPOTLIGHT_CONFIDENCE = 0.5
 
 def smart_truncate(content, length=500, suffix='...'):
@@ -39,7 +41,7 @@ def post_new(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.published_date = timezone.now()
-            
+
 
             text = request.POST['text']
             annotator = DBpediaAnnotator()
@@ -50,18 +52,18 @@ def post_new(request):
             post.save()
             if 'Resources' in annotations:
                 for resource in annotations['Resources']:
-                    
+
 
                     resource_attribute_values = sparql_endpoint.query_attributes(
                             resource['@URI'], ['owl:Thing'] + resource['@types'].split(','))
-                    
+
                     for name, value in resource_attribute_values.items():
                         resource_attribute_values[name] = ", ".join(value).replace('\n', ' ')
-                    
+
                     print('the resource_att_values =', resource_attribute_values)
-                    
+
                     abstractStrTrunc  = smart_truncate(resource_attribute_values['abstract'])
-                    print('then I try to get abstract', abstractStrTrunc)   
+                    print('then I try to get abstract', abstractStrTrunc)
                     anot = Annotation(id=None, URI =resource['@URI'], surfaceForm=resource['@surfaceForm'], offset=resource['@offset'], label = resource_attribute_values['label'], abstract = abstractStrTrunc)
                     anot.p = post;
                     anot.save()
@@ -90,4 +92,3 @@ class DBpediaAnnotator(object):
 
 
     return annotation
-
